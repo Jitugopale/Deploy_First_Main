@@ -1,8 +1,6 @@
 import React from 'react';
-import '../App.css'; 
 import Logout from './Logout';  
 import { useNavigate } from 'react-router-dom';
-
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -10,45 +8,63 @@ const Dashboard = () => {
   const styles = {
     container: {
       display: 'grid',
-      gridTemplateColumns: 'repeat(2, 1fr)', 
+      gridTemplateColumns: 'repeat(4, 1fr)', 
       gap: '20px',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '80%', 
-      maxWidth: '600px',
+      width: '90%', 
+      maxWidth: '700px',
       margin: 'auto', 
       backgroundColor: '#ffffff', 
       borderRadius: '15px', 
-      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.1)', 
       padding: '30px',
-      animation: 'fadeIn 1s ease-in-out', 
     },
     wrapper: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       height: '100vh', 
-      background: 'linear-gradient(135deg, #A2C2E8, #F3F8FF)', 
+    },
+    card: {
+      backgroundColor: '#ffffff',
+      borderRadius: '15px',
+      boxShadow: '0 4px 10px rgba(0, 0, 0, 0.2)', 
+      padding: '20px',
+      textAlign: 'center',
+      transition: 'transform 0.3s ease, box-shadow 0.3s ease',
+      cursor: 'pointer',
+    },
+    cardHover: {
+      transform: 'scale(1.05)',
+      boxShadow: '0 6px 15px rgba(0, 0, 0, 0.3)', 
     },
     button: {
-      padding: '16px 36px',
-      fontSize: '16px',
-      fontWeight: '600',
-      color: '#ffffff',
-      backgroundColor: '#007bff',
+      backgroundColor: 'transparent',
       border: 'none',
-      borderRadius: '10px',
+      outline: 'none',
       cursor: 'pointer',
-      boxShadow: '0 5px 15px rgba(0, 0, 0, 0.1)', 
-      transition: 'transform 0.3s ease, background-color 0.3s ease, box-shadow 0.3s ease',
-      width: '100%', 
-      minHeight: '50px', 
-      letterSpacing: '1px', 
+      textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '10px',
     },
-    buttonHover: {
-      backgroundColor: '#0056b3', 
-      transform: 'scale(1.05)',
-      boxShadow: '0 6px 20px rgba(0, 0, 0, 0.2)', 
+    icon: {
+      width: '60px',
+      height: '60px',
+      backgroundColor: '#ffffff',
+      borderRadius: '10px',
+      boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
+      padding: '10px',
+    },
+    label: {
+      fontSize: '16px',
+      fontWeight: 'bold',
+      color: '#333',
+    },
+    description: {
+      fontSize: '14px',
+      color: '#555',
     },
     start: {
       position: 'absolute',
@@ -57,72 +73,79 @@ const Dashboard = () => {
       transform: 'translateX(-50%)', 
       zIndex: 10, 
     },
-    buttonFocus: {
-      outline: 'none',
-      boxShadow: '0 0 10px rgba(0, 123, 255, 0.8)',
-    },
-    '@keyframes fadeIn': {
-      '0%': { opacity: 0 },
-      '100%': { opacity: 1 },
-    },
   };
-  
-  
+
+  const buttonData = [
+    {
+      label: 'Aadhaar Verification',
+      description: 'Verify your Aadhaar card details',
+      icon: '/path-to-aadhaar-icon.png',
+      onClick: () => navigate('/aadhaar-verification'),
+    },
+    {
+      label: 'Passport Verification',
+      description: 'Verify your passport details',
+      icon: '/path-to-passport-icon.png',
+      onClick: () => navigate('/passport-verification'),
+    },
+    {
+      label: 'PAN Verification',
+      description: 'Verify your PAN card details',
+      icon: '../src/images/WIN_20240922_17_06_18_Pro.jpg',
+      onClick: () => navigate('/pancard-verification'),
+    },
+    {
+      label: 'GST Verification',
+      description: 'Verify GST details',
+      icon: '/path-to-gst-icon.png',
+      onClick: () => navigate('/gst-verification'),
+    },
+    {
+      label: 'Voter ID Verification',
+      description: 'Verify your voter ID',
+      icon: '/path-to-voter-icon.png',
+      onClick: () => navigate('/voter-verification'),
+    },
+    {
+      label: 'Udyan Aadhaar Verification',
+      description: 'Verify your Udyan Aadhaar details',
+      icon: '/path-to-udyan-icon.png',
+      onClick: () => navigate('/udyan-verification'),
+    },
+    {
+      label: 'PAN Link Aadhaar',
+      description: 'Link your PAN card to Aadhaar',
+      icon: '/path-to-panlink-icon.png',
+      onClick: () => navigate('/panlink-verification'),
+    },
+  ];
 
   return (
-    <div style={styles.wrapper}>
+    <div className="d-flex flex-column align-items-center justify-content-center vh-100">
       <Logout style={styles.start} />
-      <div style={styles.container}>
-      <button
-          style={styles.button}
-          onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
-          onClick={() => navigate('/aadhaar-verification')} // Navigate to Aadhaar Verification Page
-        >
-          Aadhaar
-        </button>
-        <button
-          style={styles.button}
-          onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}        >
-          Passport
-        </button>
-        <button
-          style={styles.button}
-          onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
-          onClick={() => navigate('/pancard-verification')} // Navigate to Aadhaar Verification Page
-        >
-          PAN
-        </button>
-        <button
-          style={styles.button}
-          onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
-        >
-          GST
-        </button>
-        <button
-          style={styles.button}
-          onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
-        >
-          Voter
-        </button>
-        <button
-          style={styles.button}
-          onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
-        >
-          Udyan Aadhar
-        </button>
-        <button
-          style={styles.button}
-          onMouseOver={(e) => (e.target.style.backgroundColor = styles.buttonHover.backgroundColor)}
-          onMouseOut={(e) => (e.target.style.backgroundColor = '#007bff')}
-        >
-          PanLink Aadhar
-        </button>
+      <div className="row w-75 mx-auto">
+        {buttonData.map((btn, index) => (
+          <div
+            key={index}
+            className="col-12 col-sm-6 col-md-3 mb-4"
+            style={styles.card}
+            onMouseOver={(e) => {
+              e.currentTarget.style.transform = styles.cardHover.transform;
+              e.currentTarget.style.boxShadow = styles.cardHover.boxShadow;
+            }}
+            onMouseOut={(e) => {
+              e.currentTarget.style.transform = 'none';
+              e.currentTarget.style.boxShadow = '0 4px 10px rgba(0, 0, 0, 0.2)';
+            }}
+            onClick={btn.onClick}
+          >
+            <button style={styles.button}>
+              <img src={btn.icon} alt={`${btn.label} Icon`} style={styles.icon} />
+              <div style={styles.label}>{btn.label}</div>
+              <div style={styles.description}>{btn.description}</div>
+            </button>
+          </div>
+        ))}
       </div>
     </div>
   );
