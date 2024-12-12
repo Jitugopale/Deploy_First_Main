@@ -320,18 +320,26 @@ const AadhaarVerificationPage = () => {
       <div className="verified-users-section container mt-5">
   <h3>Verified Users</h3>
   <div className="date-range-filter">
-    <input
+    <div className="row mb-5">
+      <div className="col-md-2">
+      <input
       type="date"
       value={startDate}
       onChange={(e) => setStartDate(e.target.value)}
       placeholder="Start Date"
     />
-    <input
+      </div>
+      <div className="col-md-2 offset-md-8">
+      <input
       type="date"
       value={endDate}
       onChange={(e) => setEndDate(e.target.value)}
       placeholder="End Date"
     />
+      </div>
+    </div>
+    
+    
   </div>
   <table
     className="verified-users-table"
