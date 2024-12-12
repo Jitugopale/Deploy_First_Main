@@ -56,8 +56,8 @@ const UserSchema = new Schema({
     pannumber: { type: String, required: true },
     status: { type: String, required: true },
     verifiedData: {
-    name: { type: String },
-    pannumber: { type: String }
+    full_name: { type: String },
+    pan_number: { type: String }
   }
  
 });

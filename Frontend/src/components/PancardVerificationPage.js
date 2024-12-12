@@ -55,8 +55,8 @@ const PancardVerificationPage = () => {
         {verificationResult && (
           <div className="mt-4">
             <h3 className="text-success text-center">PAN Verification Result</h3>
-            <p className="text-center">Name: {verificationResult.name}</p>
-            <p className="text-center">PAN Number: {verificationResult.pannumber}</p>
+            <p className="text-center">Name: {verificationResult.full_name}</p>
+            <p className="text-center">PAN Number: {verificationResult.pan_number}</p>
           </div>
         )}
 

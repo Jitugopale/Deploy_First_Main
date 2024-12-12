@@ -9,6 +9,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 const SendOTP= process.env.SendOTP;
 const VerifyOTP=process.env.VerifyOTP;
 const Agent = process.env.Agent;
+const PanVerify = process.env.PanVerify;
 
 
 export const createUserController =  async (req, res) => {
@@ -222,14 +223,16 @@ async function verifyOtp(clientId, OTP, token, res) {
 }
 
 // Controller to verify PAN card
+
+
 export const verifyPanCardController = async (req, res) => {
   const { pannumber } = req.body;
 
   // Validate input
   if (!pannumber) {
-    return res.status(400).json({ 
-      status: 'error', 
-      message: "PAN number is required" 
+    return res.status(400).json({
+      status: 'error',
+      message: 'PAN number is required',
     });
   }
 
@@ -237,48 +240,57 @@ export const verifyPanCardController = async (req, res) => {
     // Generate token for verification API
     const token = createToken();
     if (!token) {
-      return res.status(400).json({ 
-        status: 'error', 
-        message: "Unable to generate token for verification" 
+      return res.status(400).json({
+        status: 'error',
+        message: 'Unable to generate token for verification',
       });
     }
 
     // Send request to the PAN card verification API
     const response = await axios.post(
-      'https://api.verifya2z.com/api/v1/verification/pan_verify',
-      { pannumber: pannumber },
+      PanVerify,
+      { pannumber },
       {
         headers: {
-          'Token': token,
-          'User-Agent': 'CORP0000363',
+          Token: token,
+          'User-Agent': Agent,
         },
       }
     );
 
-    // Check the response for successful verification
+    // Log the API response for debugging
+    console.log('API Response:', response.data);
+
+    // Check the API response for a successful verification
     if (response.data.statuscode === 200 && response.data.status === true) {
-      const { name, pannumber } = response.data.data;
+      const { full_name, pan_number } = response.data.data;
 
-      // Pass verification data to req.body to be used by another controller or middleware
-      req.body.verifiedData = { name, pannumber };  // Add the verified data to req.body
+      // Add verified data to the request object for future use
+      req.body.verifiedData = { full_name, pan_number };
 
-      // Return success message with PAN number and verified data
-      return res.json({
+      // Return the success response with the verified data
+      return res.status(200).json({
         status: 'success',
-        message: 'PAN Card verified successfully.',
-        verifiedData: { name, pannumber },  // Return the name and PAN number
+        message: response.data.message || 'PAN Card verified successfully.',
+        verifiedData: { full_name, pan_number },
       });
     } else {
+      // Handle unsuccessful verification
       return res.status(400).json({
         status: 'error',
-        message: "PAN verification failed. Invalid or unverified details."
+        message:
+          response.data.message || 'PAN verification failed. Invalid details.',
       });
     }
   } catch (error) {
-    console.error("PAN Verification Error:", error);
+    console.error('PAN Verification Error:', error);
+
+    // Handle any errors during the process
     return res.status(500).json({
       status: 'error',
-      message: error.response?.data?.message || "An error occurred during PAN verification.",
+      message:
+        error.response?.data?.message ||
+        'An error occurred during PAN verification.',
     });
   }
 };
