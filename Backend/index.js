@@ -28,6 +28,12 @@ connectToMongo();
 app.use("/api/auth", router);      
 app.use("/api/adhar", router);     
 app.use('/api/pan', router);
+app.use('/api/voter', router);
+app.use('/api/passport', router);
+app.use('/api/credit', router);
+app.use('/api/gst', router);
+app.use('/api/udyam', router);
+app.use('/api/pandetail', router);
 
 app.get('/', (req, res) => {
   res.send('<h1>Server is running</h1>');

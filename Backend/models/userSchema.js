@@ -58,7 +58,19 @@ const UserSchema = new Schema({
     verifiedData: {
     full_name: { type: String },
     pan_number: { type: String }
-  }
+  },
+  refid: {
+        type: String, // You can use String as the type for unique reference IDs
+        required: false, // Make it optional if not always provided
+        unique: true, // Ensures refid is unique
+        sparse: true // Allows multiple null values
+    },
+    id_number: {
+        type: String, // You can use String or Number depending on the format of the ID
+        required: false, // Optional, can be updated based on your requirements
+        unique: true, // Ensures id_number is unique
+        sparse: true, // Allows multiple null values
+    }
  
 });
 

@@ -10,6 +10,15 @@ const SendOTP= process.env.SendOTP;
 const VerifyOTP=process.env.VerifyOTP;
 const Agent = process.env.Agent;
 const PanVerify = process.env.PanVerify;
+const authorisedkey = process.env.authorisedkey;
+const VerifyVoter = process.env.VerifyVoter;
+const VerifyPassport = process.env.VerifyPassport;
+const VerifyCredit = process.env.VerifyCredit;
+const VerifyGST = process.env.VerifyGST;
+const VerifyUdyam = process.env.VerifyUdyam;
+const VerifyPanDetails = process.env.VerifyPanDetails;
+const partnerId = process.env.partnerId;
+const API_SECRET = process.env.API_SECRET;
 
 
 export const createUserController =  async (req, res) => {
@@ -115,7 +124,6 @@ export const aadhaarOtpController = async (req, res) => {
     );
 
     if (otpResponse.status === 200) {
-      // If OTP generation is successful, create JWT token
       const otpToken = jwt.sign(
         { client_id: otpResponse.data.data.client_id },
         JWT_SECRET,
@@ -258,24 +266,19 @@ export const verifyPanCardController = async (req, res) => {
       }
     );
 
-    // Log the API response for debugging
     console.log('API Response:', response.data);
 
-    // Check the API response for a successful verification
     if (response.data.statuscode === 200 && response.data.status === true) {
       const { full_name, pan_number } = response.data.data;
 
-      // Add verified data to the request object for future use
       req.body.verifiedData = { full_name, pan_number };
 
-      // Return the success response with the verified data
       return res.status(200).json({
         status: 'success',
         message: response.data.message || 'PAN Card verified successfully.',
         verifiedData: { full_name, pan_number },
       });
     } else {
-      // Handle unsuccessful verification
       return res.status(400).json({
         status: 'error',
         message:
@@ -285,7 +288,6 @@ export const verifyPanCardController = async (req, res) => {
   } catch (error) {
     console.error('PAN Verification Error:', error);
 
-    // Handle any errors during the process
     return res.status(500).json({
       status: 'error',
       message:
@@ -293,4 +295,303 @@ export const verifyPanCardController = async (req, res) => {
         'An error occurred during PAN verification.',
     });
   }
+};
+
+
+// verifying voter ID
+
+  export const voterIdVerification = async (req, res) => {
+    const { refid, id_number } = req.body;
+  
+    if (!refid || !id_number) {
+        return res.status(400).json({ error: 'Both refid and id_number are required' });
+    }
+  
+    const reqid = Date.now(); 
+    
+    const payload = { 
+      refid: refid, 
+      timestamp: Math.floor(Date.now() / 1000), 
+      partnerId: partnerId, 
+      reqid: reqid 
+    };
+    
+    const token = jwt.sign(payload, API_SECRET); 
+  
+    try {
+        const response = await axios.post(
+            VerifyVoter,
+            { refid, id_number },  
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Token': token,  
+                    'authorisedkey': authorisedkey,  
+                    'accept': 'application/json',  
+                    'User-Agent': 'CORP00001',
+                },
+            }
+        );
+  
+        res.status(200).json(response.data);  
+    } catch (error) {
+        console.error('Error verifying Voter ID:', error.message);
+  
+        if (error.response) {
+            res.status(error.response.status).json(error.response.data); 
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' }); 
+        }
+    }
+  };
+  
+
+
+//Verify Passport
+
+  export const passportVerification = async (req, res) => {
+    const { refid, id_number, dob } = req.body;
+
+    if (!refid || !id_number || !dob) {
+        return res.status(400).json({ error: 'refid, id_number, and dob are required' });
+    }
+
+    const reqid = Date.now(); 
+
+    const payload = {
+        refid: refid,
+        timestamp: Math.floor(Date.now() / 1000), 
+        partnerId: partnerId, 
+        reqid: reqid, 
+    };
+
+    const token = jwt.sign(payload, API_SECRET); 
+
+    try {
+        const response = await axios.post(
+          VerifyPassport,
+            { refid, id_number, dob },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Token': token, 
+                    'authorisedkey': authorisedkey, 
+                    'User-Agent': 'CORP00001', 
+                },
+            }
+        );
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error verifying Passport:', error.message);
+
+        if (error.response) {
+            res.status(error.response.status).json(error.response.data);
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+};
+
+//Verify Credit
+
+export const creditReportCheckController = async (req, res) => {
+  const { refid, name, mobile, document_id, date_of_birth, address, pincode } = req.body;
+
+  if (!refid || !name || !mobile || !document_id) {
+      return res.status(400).json({ error: 'refid, name, mobile, and document_id are required' });
+  }
+
+  const payload = {
+      timestamp: Math.floor(Date.now() / 1000),
+      partnerId: partnerId,
+      reqid: refid,
+  };
+  const token = jwt.sign(payload, API_SECRET);
+
+  try {
+      const response = await axios.post(
+          VerifyCredit,
+          { refid, name, mobile, document_id, date_of_birth, address, pincode },
+          {
+              headers: {
+                  'Content-Type': 'application/json',
+                  'Token': token,
+                  'authorisedkey': authorisedkey,
+                  'accept': 'application/json',
+                  'User-Agent': 'CORP00001',
+              },
+          }
+      );
+
+      res.status(200).json(response.data);
+  } catch (error) {
+      console.error('Error fetching credit report:', error.message);
+
+      if (error.response) {
+          res.status(error.response.status).json(error.response.data);
+      } else {
+          res.status(500).json({ error: 'Internal Server Error' });
+      }
+  }
+};
+
+
+
+// GST Verification
+export const gstVerifyController = async (req, res) => {
+    const { refid, id_number, filing_status } = req.body;
+
+    if (!refid || typeof id_number === 'undefined' || typeof filing_status === 'undefined') {
+        return res.status(400).json({
+            error: 'Missing required fields: refid, id_number, and filing_status are mandatory.',
+        });
+    }
+
+    if (filing_status !== 'true' && filing_status !== 'false') {
+        return res.status(400).json({
+            error: 'Invalid value for filing_status. Allowed values are "true" or "false".',
+        });
+    }
+
+    const payload = {
+        timestamp: Math.floor(Date.now() / 1000),
+        partnerId: partnerId,
+        reqid: refid,
+    };
+
+    const token = jwt.sign(payload, API_SECRET); 
+
+    try {
+        const apiPayload = {
+            refid,
+            id_number,
+            filing_status,
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Token': token,
+            'authorisedkey': authorisedkey,
+            'accept': 'application/json',
+            'User-Agent': 'CORP00001',
+        };
+
+        const response = await axios.post(
+          VerifyGST,
+            apiPayload,
+            { headers }
+        );
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error during GST verification:', error.message);
+
+        if (error.response) {
+            res.status(error.response.status).json({ error: error.response.data });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+};
+
+
+
+//Udyam Aadhaar verification
+export const udyamAadhaarVerifyController = async (req, res) => {
+    const { refid, udyam_aadhaar } = req.body;
+
+    if (!refid || !udyam_aadhaar) {
+        return res.status(400).json({ error: 'Missing required fields: refid and udyam_aadhaar are mandatory.' });
+    }
+
+    const payload = {
+        timestamp: Math.floor(Date.now() / 1000),
+        partnerId: partnerId,
+        reqid: refid,
+    };
+
+    const token = jwt.sign(payload, API_SECRET);
+
+    try {
+        const apiPayload = {
+            refid,
+            udyam_aadhaar
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Token': token,
+            'authorisedkey': authorisedkey, 
+            'accept': 'application/json',
+            'User-Agent': 'CORP00001'
+        };
+
+        const response = await axios.post(
+          VerifyUdyam,
+            apiPayload,
+            { headers }
+        );
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error during Udyam Aadhaar verification:', error.message);
+
+        if (error.response) {
+            res.status(error.response.status).json({ error: error.response.data });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
+};
+
+
+
+
+// PAN details verification
+export const panDetailedInfoGetController = async (req, res) => {
+    const { refid, id_number } = req.body;
+
+    if (!refid || !id_number) {
+        return res.status(400).json({ error: 'Missing required fields: refid and id_number are mandatory.' });
+    }
+
+    const payload = {
+        timestamp: Math.floor(Date.now() / 1000),
+        partnerId: partnerId,
+        reqid: refid,
+    };
+
+    const token = jwt.sign(payload, API_SECRET); 
+
+    try {
+        const apiPayload = {
+            refid,
+            id_number
+        };
+
+        const headers = {
+            'Content-Type': 'application/json',
+            'Token': token,
+            'authorisedkey': authorisedkey,
+            'accept': 'application/json',
+            'User-Agent': 'CORP00001'
+        };
+
+        const response = await axios.post(
+          VerifyPanDetails,
+            apiPayload,
+            { headers }
+        );
+
+        res.status(200).json(response.data);
+    } catch (error) {
+        console.error('Error during PAN details verification:', error.message);
+
+        if (error.response) {
+            res.status(error.response.status).json({ error: error.response.data });
+        } else {
+            res.status(500).json({ error: 'Internal Server Error' });
+        }
+    }
 };
