@@ -17,7 +17,8 @@ const UserSchema = new Schema({
     PhoneNo: {
         type: String,
         required: true,
-    },
+        match: /^[0-9]{10}$/, // Ensure it's a 10-digit number
+      },
     email: {
         type: String,
         required: true,
@@ -53,12 +54,6 @@ const UserSchema = new Schema({
         unique: true, // Ensures Aadhar is unique for each user
         sparse:true
     },
-    pannumber: { type: String, required: true },
-    status: { type: String, required: true },
-    verifiedData: {
-    full_name: { type: String },
-    pan_number: { type: String }
-  },
   refid: {
         type: String, // You can use String as the type for unique reference IDs
         required: false, // Make it optional if not always provided

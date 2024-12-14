@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 import {validationResult} from 'express-validator';
 import jwt from "jsonwebtoken"
 import User from "../models/userSchema.js"
+import Pan from "../models/PanSchema.js"
 import axios from 'axios';
 dotenv.config();
 const JWT_SECRET = process.env.JWT_SECRET;
